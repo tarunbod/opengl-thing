@@ -6,6 +6,16 @@
 #include "Renderer.h"
 #include "StaticShader.h"
 
+glm::mat4 getTransformMatrix(glm::vec3 translation = VEC_3_0, float rx = 0, float ry = 0, float rz = 0, float scale = 1) {
+    glm::mat4 mat = glm::mat4(1.0f);
+    mat = glm::translate(mat, translation);
+    mat = glm::rotate(mat, glm::radians(rx), glm::vec3(1.0f, 0.0f, 0.0f));
+    mat = glm::rotate(mat, glm::radians(ry), glm::vec3(0.0f, 1.0f, 0.0f));
+    mat = glm::rotate(mat, glm::radians(rz), glm::vec3(0.0f, 0.0f, 1.0f));
+    mat = glm::scale(mat, glm::vec3(scale, scale, scale));
+    return mat;
+}
+
 GLFWwindow* window;
 
 bool windowSetup() {
@@ -39,7 +49,8 @@ bool windowSetup() {
 }
 
 void drawSetup() {
-    glClearColor(0.0f, 0.0f, 0.5f, 1.0f);
+    glEnable(GL_DEPTH_TEST);
+    glClearColor(1.0f, 1.0f, 0.9f, 1.0f);
 }
 
 int main() {
@@ -49,34 +60,54 @@ int main() {
 
     drawSetup();
 
+    Loader loader;
+    Renderer renderer;
+    StaticShader shader;
+    shader.validate();
+
     GLfloat points[] = {
-        -0.5f, 0.5f, 0.0f,
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.5f, 0.5f, 0.0f
+        -0.5f, 0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,
+        0.5f, -0.5f, -0.5f,
+        0.5f, 0.5f, -0.5f,
+        -0.5f, 0.5f, 0.5f,
+        -0.5f, -0.5f, 0.5f,
+        0.5f, -0.5f, 0.5f,
+        0.5f, 0.5f, 0.5f
     };
 
     int indices[] = {
-        0, 1, 3,
-        3, 1, 2
+        0, 1, 2,
+        0, 2, 3,
+        4, 5, 6,
+        4, 6, 7,
+        4, 0, 3,
+        4, 3, 7,
+        1, 5, 6,
+        1, 6, 2,
+        3, 2, 6,
+        3, 6, 7,
+        5, 1, 0,
+        5, 0, 4
     };
 
     int vSize = sizeof(points) / sizeof(GLfloat);
     int iSize = sizeof(indices) / sizeof(int);
 
-    Loader loader;
-    Renderer renderer;
-    StaticShader shader;
-
     RawModel model = loader.loadModelFromVertices(points, vSize, indices, iSize);
+
+    float x = 0;
 
     do {
         renderer.prepare();
         shader.start();
+        shader.loadTransformMatrix(getTransformMatrix(glm::vec3(0.0f, 0.0f, -5.0f), x, x));
+        shader.loadProjectionMatrix(renderer.getProjectionMatrix());
         renderer.render(&model);
         shader.stop();
         glfwSwapBuffers(window);
         glfwPollEvents();
+        x += 0.10f;
     } while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0);
     return 0;
 }

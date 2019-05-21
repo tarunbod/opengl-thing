@@ -32,14 +32,16 @@ void ShaderProgram::bindAttribute(int attr, std::string varName) {
     glBindAttribLocation(programID, attr, varName.c_str());
 }
 
+int ShaderProgram::getUniformLocation(std::string name) {
+    return glGetUniformLocation(programID, name.c_str());
+}
+
 ShaderProgram::ShaderProgram(std::string vertexFile, std::string fragmentFile) {
     vShaderID = loadShader(vertexFile, GL_VERTEX_SHADER);
     fShaderID = loadShader(fragmentFile, GL_FRAGMENT_SHADER);
     programID = glCreateProgram();
     glAttachShader(programID, vShaderID);
     glAttachShader(programID, fShaderID);
-    glLinkProgram(programID);
-    glValidateProgram(programID);
 }
 
 ShaderProgram::~ShaderProgram() {
@@ -49,6 +51,13 @@ ShaderProgram::~ShaderProgram() {
     glDeleteShader(vShaderID);
     glDeleteShader(fShaderID);
     glDeleteProgram(programID);
+}
+
+void ShaderProgram::validate() {
+    bindAttributes();
+    glLinkProgram(programID);
+    glValidateProgram(programID);
+    getAllUniformLocations();
 }
 
 void ShaderProgram::start() {

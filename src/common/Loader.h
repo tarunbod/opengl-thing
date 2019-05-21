@@ -10,6 +10,7 @@ private:
     void bindIndicesBuffer(int indices[], int size);
 public:
     RawModel loadModelFromVertices(GLfloat vertices[], int vSize, int indices[], int iSize);
+    int loadTexture(std::string filename);
 };
 
 #endif
