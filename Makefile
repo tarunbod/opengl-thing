@@ -1,5 +1,5 @@
 CXX=g++
-SRC_FILES=src/main.cpp src/common/*.cpp
+SRC_FILES=src/*.cpp src/common/*.cpp
 BIN_DIR=bin
 EXEC=main.exe
 FLAGS=-std=c++11

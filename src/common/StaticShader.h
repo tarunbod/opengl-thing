@@ -8,6 +8,7 @@ class StaticShader: public ShaderProgram {
 private:
     int transformMatrixLoc;
     int projectionMatrixLoc;
+    int viewMatrixLoc;
 protected:
     void bindAttributes();
     void getAllUniformLocations();
@@ -15,6 +16,7 @@ public:
     StaticShader(): ShaderProgram("shaders/static_v.txt", "shaders/static_f.txt") {};
     void loadTransformMatrix(glm::mat4 mat);
     void loadProjectionMatrix(glm::mat4 mat);
+    void loadViewMatrix(glm::mat4 mat);
 };
 
 #endif

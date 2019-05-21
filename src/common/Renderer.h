@@ -3,6 +3,9 @@
 
 #include "../utils.h"
 #include "RawModel.h"
+#include "StaticShader.h"
+#include "Entity.h"
+#include "Camera.h"
 
 class Renderer {
 private:
@@ -13,7 +16,7 @@ public:
     static constexpr float FAR_PLANE = 1000.0f;
     Renderer();
     void prepare();
-    void render(RawModel* model);
+    void render(Entity *entity, StaticShader *shader, Camera *camera);
     glm::mat4 getProjectionMatrix();
 };
 
